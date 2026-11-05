@@ -1,0 +1,845 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>Minnesota Permit Prep</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#0f6b45">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@600;800;900&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: one-screen app — scrolling main column (max 560px) over a fixed bottom tab bar. Highway-guide-sign identity. */
+:root{
+  --bg:#eef2ee; --surface:#ffffff; --sunk:#e3e9e4; --ink:#14201a; --muted:#56655c; --line:#d3dcd5;
+  --accent:#0f6b45; --accent-ink:#ffffff; --accent-soft:#d8ebe0;
+  --good:#1b7a3e; --good-soft:#dcf0e2; --bad:#b83226; --bad-soft:#f7e0dd; --warn:#a76a00; --warn-soft:#f8ecd2;
+  --plate:#0f6b45; --plate-ink:#ffffff;
+  --display:"Overpass","Arial Narrow",Arial,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1411; --surface:#16201b; --sunk:#1d2922; --ink:#e4ebe6; --muted:#9aaba1; --line:#2a3830;
+  --accent:#43b27e; --accent-ink:#04140c; --accent-soft:#1c3a2b;
+  --good:#58c784; --good-soft:#173524; --bad:#f07466; --bad-soft:#3d1c18; --warn:#e6b04a; --warn-soft:#3a2c10;
+  --plate:#0c4f34; --plate-ink:#eaf5ee; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0d1411; --surface:#16201b; --sunk:#1d2922; --ink:#e4ebe6; --muted:#9aaba1; --line:#2a3830;
+  --accent:#43b27e; --accent-ink:#04140c; --accent-soft:#1c3a2b;
+  --good:#58c784; --good-soft:#173524; --bad:#f07466; --bad-soft:#3d1c18; --warn:#e6b04a; --warn-soft:#3a2c10;
+  --plate:#0c4f34; --plate-ink:#eaf5ee; color-scheme:dark }
+
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--body);display:flex;flex-direction:column;overflow:hidden;-webkit-tap-highlight-color:transparent}
+#main{flex:1;overflow-y:auto;overscroll-behavior:contain}
+.wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 28px;display:flex;flex-direction:column;gap:16px}
+#main > *{max-width:560px;margin-inline:auto}
+#main{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 28px}
+#main > * + *{margin-top:16px}
+
+h1,h2{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+p{margin:0}
+.num,.big,.count,.clock,.big-n{font-variant-numeric:tabular-nums}
+.label,.eyebrow,.topic-tag{font:800 11.5px/1.2 var(--display);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.fine{font-size:14px;color:var(--muted)}
+.center{text-align:center}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+
+/* Hero: a guide-sign plate */
+.hero-plate{background:var(--plate);color:var(--plate-ink);border-radius:12px;padding:18px 20px;border:3px solid var(--plate);box-shadow:inset 0 0 0 2px var(--plate-ink)}
+.hero-plate .eyebrow{color:var(--plate-ink);opacity:.8}
+.hero-plate h1{font-weight:900;font-size:clamp(26px,7.5vw,34px);line-height:1.05;margin-top:6px}
+.hero-sub{margin-top:8px;font-size:14px;opacity:.85}
+
+.page-h{display:flex;flex-direction:column;gap:6px}
+.page-h h1{font-size:28px;font-weight:900}
+.page-h p{color:var(--muted);font-size:15px;max-width:60ch}
+.section-h{font-size:18px;font-weight:800;margin-top:8px}
+.section-h.tight{margin:0 0 12px}
+
+.ready-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.big{font:900 46px/1 var(--display);margin-top:4px}
+.big span{font-size:20px;color:var(--muted);font-weight:800;margin-left:2px}
+.chip{font:800 12px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:7px 10px;border-radius:999px;background:var(--sunk);color:var(--muted);white-space:nowrap}
+.chip.good{background:var(--good-soft);color:var(--good)} .chip.warn{background:var(--warn-soft);color:var(--warn)}
+.meter{position:relative;height:10px;background:var(--sunk);border-radius:6px;margin:14px 0 10px}
+.meter-fill{height:100%;background:var(--accent);border-radius:6px}
+.meter-line{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink)}
+.readiness .fine{margin-bottom:14px}
+
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.actions.two > *{flex:1}
+.btn{font:700 16px/1.2 var(--body);padding:13px 16px;border-radius:9px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:48px}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover:not(:disabled){filter:brightness(1.07)}
+.btn.danger{background:var(--bad);border-color:var(--bad);color:var(--surface)}
+.btn.ghost{background:transparent}
+.btn.wide{width:100%}
+.btn:disabled{opacity:.45;cursor:default}
+.link{background:none;border:0;padding:6px 0;color:var(--accent);font:700 15px var(--body);cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.topics{display:flex;flex-direction:column;gap:8px}
+.topic{display:flex;align-items:center;gap:14px;text-align:left;width:100%;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);color:var(--ink);cursor:pointer;font:inherit}
+.topic:hover{border-color:var(--accent)}
+.topic-main{flex:1;min-width:0}
+.topic-name{font:800 17px/1.25 var(--display)}
+.topic-blurb{font-size:14px;color:var(--muted)}
+.topic-side{width:72px;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.topic-pct{font:800 14px var(--display);font-variant-numeric:tabular-nums;color:var(--muted)}
+.bar{height:6px;width:100%;background:var(--sunk);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:4px}
+.bar i.low{background:var(--warn)}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* Questions */
+.runner{display:flex;flex-direction:column;gap:14px}
+.run-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.count{font:800 14px var(--display);color:var(--muted)}
+.clock{font:900 18px var(--display);padding:4px 10px;border-radius:7px;background:var(--sunk)}
+.clock.low{background:var(--bad-soft);color:var(--bad)}
+.progress{height:6px;background:var(--sunk);border-radius:4px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.qcard{display:flex;flex-direction:column;gap:14px}
+.sign{width:150px;height:150px;align-self:center;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.25))}
+.sign.sm{width:64px;height:64px;flex:none}
+.sign.xl{width:min(220px,60vw);height:min(220px,60vw)}
+.sign svg{width:100%;height:100%;display:block}
+.q-row{display:flex;gap:14px;align-items:center;margin:8px 0 12px}
+.q-text{font-size:17px;font-weight:700;line-height:1.4}
+.q-text.lg{font-size:19px}
+.answers{display:flex;flex-direction:column;gap:9px}
+.ans{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font:16px/1.4 var(--body);cursor:pointer;min-height:52px}
+.ans:hover:not(:disabled){border-color:var(--accent)}
+.ans .key{flex:none;width:26px;height:26px;border-radius:6px;display:grid;place-items:center;background:var(--sunk);font:800 13px var(--display);color:var(--muted)}
+.ans.chosen{border-color:var(--accent);background:var(--accent-soft)} .ans.chosen .key{background:var(--accent);color:var(--accent-ink)}
+.ans.right{border-color:var(--good);background:var(--good-soft)} .ans.right .key{background:var(--good);color:var(--surface)}
+.ans.wrong{border-color:var(--bad);background:var(--bad-soft)} .ans.wrong .key{background:var(--bad);color:var(--surface)}
+.ans.dim{opacity:.55}
+.ans:disabled{cursor:default}
+.explain{padding:14px 16px;border-radius:9px;font-size:15.5px;border-left:4px solid}
+.explain.ok{background:var(--good-soft);border-color:var(--good)} .explain.no{background:var(--bad-soft);border-color:var(--bad)}
+.daily .explain{margin:12px 0}
+.daily .answers{gap:8px}
+
+.exam-nav{display:grid;grid-template-columns:1fr 2fr;gap:10px}
+.grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-top:4px}
+.dot{aspect-ratio:1;max-width:100%;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:700 11px var(--display);font-variant-numeric:tabular-nums;cursor:pointer;padding:0}
+.dot.done{background:var(--accent-soft);color:var(--ink);border-color:transparent}
+.dot.here{outline:2px solid var(--accent);outline-offset:1px}
+.confirm{display:flex;flex-direction:column;gap:12px;border-color:var(--warn);background:var(--warn-soft)}
+
+.spec dl{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 16px}
+.spec dt{font:800 11.5px var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.spec dd{margin:2px 0 0;font:900 20px var(--display)}
+.toggle{display:flex;gap:10px;align-items:center;font-weight:700;margin-bottom:8px;cursor:pointer}
+.toggle input{width:22px;height:22px;accent-color:var(--accent)}
+.spec .fine{margin-bottom:16px}
+
+.result{display:flex;flex-direction:column;gap:10px}
+.stamp{align-self:flex-start;font:900 15px var(--display);letter-spacing:.12em;padding:6px 12px;border:2.5px solid;border-radius:6px}
+.result.pass .stamp{color:var(--good)} .result.fail .stamp{color:var(--bad)}
+.breakdown{display:flex;flex-direction:column;gap:10px;margin:6px 0}
+.bd-row{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:15px}
+.bd-row .bar{grid-column:1/-1}
+.bd-row .num{font-weight:700}
+.review{display:flex;flex-direction:column;gap:10px}
+.rv .q-row{margin:6px 0 8px}
+.rv-line{font-size:15px;padding:6px 10px;border-radius:6px;margin-bottom:6px}
+.rv-line b{font:800 11.5px var(--display);letter-spacing:.08em;text-transform:uppercase;margin-right:6px}
+.rv-line.no{background:var(--bad-soft)} .rv-line.ok{background:var(--good-soft)}
+
+/* Flashcards */
+.deck-stats{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;font-size:15px}
+.flash{display:flex;flex-direction:column;align-items:stretch;gap:16px;padding:20px}
+.flash .count{align-self:flex-end}
+.flash .sign{margin:4px 0}
+.flash-back{text-align:center}
+.flash-back h2{font-size:24px;font-weight:900}
+.flash-back p{margin-top:6px;color:var(--muted);font-size:16px}
+.legend-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin:0}
+.legend-grid div{display:flex;flex-direction:column}
+.legend-grid dt{font-weight:700;display:flex;align-items:center;gap:6px}
+.legend-grid dd{margin:0;color:var(--muted);font-size:14px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+
+/* Progress */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.big-n{font:900 32px/1.1 var(--display);margin-top:4px}
+.chart svg{width:100%;height:auto;display:block}
+.grid-l{stroke:var(--line);stroke-width:1}
+.pass-l{stroke:var(--ink);stroke-width:1.2;stroke-dasharray:4 3}
+.ax{font:700 10px var(--body);fill:var(--muted)}
+.pass-t{fill:var(--ink)}
+.end-v{fill:var(--ink);font:900 12px var(--display)}
+.area{fill:var(--accent);opacity:.14}
+.line{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.pt-ok{fill:var(--accent);stroke:var(--surface);stroke-width:1.5}
+.pt-no{fill:var(--bad);stroke:var(--surface);stroke-width:1.5}
+.empty{display:flex;flex-direction:column;gap:12px;align-items:flex-start;color:var(--muted)}
+.reset{background:transparent;border-style:dashed}
+#resetZone{display:flex;flex-direction:column;gap:10px}
+
+/* Tab bar */
+#tabs{display:flex;background:var(--surface);border-top:1px solid var(--line);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 4px 10px;border:0;background:none;color:var(--muted);font:800 11.5px var(--display);letter-spacing:.04em;cursor:pointer;min-height:56px}
+.tab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tab[aria-current="page"]{color:var(--accent)}
+.tab[aria-current="page"] svg{stroke-width:2.6}
+
+@media (min-width:600px){.hero-plate h1{font-size:38px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main id="main" tabindex="-1"></main>
+<nav id="tabs" aria-label="Sections">
+  <button class="tab" data-go="home" aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Home</button>
+  <button class="tab" data-go="practice"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Practice</button>
+  <button class="tab" data-go="signs"><svg viewBox="0 0 24 24"><path d="M12 2l10 10-10 10L2 12z"/><path d="M12 8v5M12 16v.5"/></svg>Signs</button>
+  <button class="tab" data-go="progress"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Progress</button>
+</nav>
+<script>
+/* Question bank. Original questions written from Minnesota law and the MN Driver's Manual.
+   a[0] is always the correct answer; order is shuffled when shown. s = sign artwork id. */
+const TOPICS = {
+  signs:   { name: "Road signs",             blurb: "Shapes, colors and symbols" },
+  signals: { name: "Signals & markings",     blurb: "Lights, arrows and lane lines" },
+  laws:    { name: "Traffic laws",           blurb: "Speed, turns, parking, phones" },
+  row:     { name: "Right of way & sharing", blurb: "Pedestrians, bikes, buses, trains" },
+  dwi:     { name: "Impaired driving",       blurb: "Alcohol, drugs and DWI law" },
+  safe:    { name: "Safe driving & weather", blurb: "Winter, skids, night, emergencies" },
+  gdl:     { name: "Permits & licensing",    blurb: "Teen driver rules and paperwork" }
+};
+
+const Q = [
+/* ---------- Road signs ---------- */
+{id:"sg01",t:"signs",s:"stop",q:"What must you do at this sign?",a:["Come to a complete stop, then go when it is safe","Slow down and continue if no one is coming","Stop only if other vehicles are at the intersection","Yield only to traffic coming from your right"],e:"A red octagon always means a full stop. Stop at the stop line, crosswalk, or before entering the intersection, then proceed only when the way is clear."},
+{id:"sg02",t:"signs",s:"yield",q:"This sign means you must:",a:["Slow down, give the right of way, and stop if necessary","Always come to a full stop","Speed up to merge ahead of other traffic","Stop only when a pedestrian is present"],e:"The downward triangle is a yield sign. Slow down and let traffic and pedestrians go first. Stop if you need to."},
+{id:"sg03",t:"signs",s:"dne",q:"You see this sign at the entrance to a ramp. What does it mean?",a:["You may not enter; traffic is coming toward you","Enter only if the road is clear","The ramp is closed to trucks only","Do not stop on the ramp"],e:"Do Not Enter marks a road or ramp you cannot drive onto, usually because it carries traffic in the opposite direction."},
+{id:"sg04",t:"signs",s:"wrongway",q:"If you pass this sign, you are:",a:["Driving against traffic and must turn around safely","On a one-way street going the correct way","In a lane that ends ahead","Entering a toll lane"],e:"Wrong Way signs are often placed past Do Not Enter signs. If you see one facing you, you are going the wrong direction. Pull over safely and turn around."},
+{id:"sg05",t:"signs",s:"school",q:"A five-sided sign like this warns you of:",a:["A school zone or school crossing","A railroad crossing","A no-passing zone","A hospital zone"],e:"The pentagon shape is used only for school zones and school crossings. Watch for children and obey reduced speed limits."},
+{id:"sg06",t:"signs",s:"rradv",q:"A round yellow sign with an X and two R's means:",a:["A railroad crossing is ahead","You are at the railroad tracks now","Road closed ahead","Rest area ahead"],e:"The round advance warning sign is placed before a railroad crossing. Slow down, look and listen, and be ready to stop."},
+{id:"sg07",t:"signs",s:"crossbuck",q:"At a railroad crossing, this white X-shaped sign should be treated like a:",a:["Yield sign: be ready to stop for trains","Stop sign in all cases","Speed limit sign","Signal that the crossing is closed"],e:"The crossbuck marks the crossing itself. Treat it as a yield sign. You must stop if a train is coming."},
+{id:"sg08",t:"signs",s:"nopass",q:"Where would you find this pennant-shaped sign, and what does it mean?",a:["On the left side of the road, marking the start of a no-passing zone","On the right side, marking a merge","On the left side, marking the end of a work zone","Overhead, marking a toll lane"],e:"The pennant is the only sign with this shape. It sits on the left side of two-lane roads where a no-passing zone begins."},
+{id:"sg09",t:"signs",s:"curve",q:"Yellow diamond-shaped signs are used to:",a:["Warn of road conditions or hazards ahead","Tell you which lane to use","Give directions to cities","Show the speed limit"],e:"Diamond signs are warning signs. This one shows the road curves to the right ahead."},
+{id:"sg10",t:"signs",s:"roadwork",q:"Orange signs like this one mean:",a:["A construction or maintenance work zone is ahead","A school is nearby","Services such as gas or food are ahead","A scenic area is ahead"],e:"Orange is the color for work zones. Slow down, watch for workers and equipment, and follow posted speeds."},
+{id:"sg11",t:"signs",s:"hospital",q:"Blue signs like this give information about:",a:["Motorist services such as hospitals, gas, food, and lodging","Recreation and cultural sites","Warnings about hazards","Highway route numbers"],e:"Blue guide signs point to services. Brown signs point to recreation and cultural sites. Green signs give directions."},
+{id:"sg12",t:"signs",q:"Brown signs point you toward:",a:["Recreational and cultural points of interest","Hospitals and gas stations","Construction zones","Detours"],e:"Brown is used for parks, historic sites, campgrounds, and similar destinations."},
+{id:"sg13",t:"signs",q:"Green signs on the highway are used for:",a:["Directions, distances, and exits","Warnings about hazards","Motorist services","School zones"],e:"Green guide signs show destinations, mileage, and exit information."},
+{id:"sg14",t:"signs",s:"merge",q:"This sign warns that:",a:["Traffic from another lane or ramp will be merging into your lane","Your lane ends and you must stop","A divided highway ends","There is a side road on the right with a stop sign"],e:"Be prepared to adjust your speed and space so merging traffic can enter smoothly."},
+{id:"sg15",t:"signs",s:"signal",q:"This sign means:",a:["A traffic signal is ahead","A railroad crossing is ahead","An emergency vehicle station is ahead","The intersection has an all-way stop"],e:"The signal-ahead warning is placed where a traffic light may be hard to see in time. Be ready to stop."},
+{id:"sg16",t:"signs",s:"keepright",q:"This sign tells you to:",a:["Keep to the right of the island or obstruction","Turn right at the next intersection","Merge right because the left lane ends","Exit right for rest area"],e:"Keep Right is a regulatory sign posted at medians and traffic islands. Pass on the right side."},
+{id:"sg17",t:"signs",s:"nouturn",q:"What does this sign mean?",a:["U-turns are not allowed","Left turns are not allowed","The road ahead curves sharply","Do not enter"],e:"A red circle with a slash over a symbol means that action is prohibited. Here the symbol is a U-turn."},
+{id:"sg18",t:"signs",s:"noleft",q:"What does this sign mean?",a:["Left turns are not allowed","U-turns are not allowed","The left lane is closed","Keep left"],e:"The slash over a left-turn arrow means you may not turn left here."},
+{id:"sg19",t:"signs",s:"smv",q:"An orange triangle with a red border on the back of a vehicle means:",a:["It is a slow-moving vehicle, such as farm equipment","It is carrying hazardous materials","It is an emergency vehicle","It is a school bus"],e:"The slow-moving vehicle emblem is used on tractors, horse-drawn buggies, and other slow vehicles. Slow down early and pass only when it is safe and legal."},
+{id:"sg20",t:"signs",s:"divided",q:"This sign means:",a:["A divided highway begins ahead","A divided highway ends ahead","The road narrows to one lane","Two roads merge"],e:"The road ahead will be split by a median. Keep to the right of it."},
+{id:"sg21",t:"signs",s:"twoway",q:"This sign means:",a:["You are leaving a one-way road; traffic now goes both ways","There are two lanes in your direction","Passing is allowed","The road is a divided highway"],e:"Two-way traffic ahead warns that oncoming traffic will share the road with you."},
+{id:"sg22",t:"signs",s:"speed",q:"White rectangular signs like this one are generally:",a:["Regulatory signs that state the law","Warning signs about hazards","Guide signs for directions","Signs for recreation areas"],e:"Regulatory signs, such as speed limits, are usually white rectangles with black or red lettering. You must obey them."},
+{id:"sg23",t:"signs",s:"curve35",q:"The yellow speed plate under this curve sign is:",a:["The recommended safe speed for the curve in good conditions","The legal minimum speed","The speed limit for trucks only","The speed limit for the rest of the highway"],e:"Advisory speed plates show a safe speed for a curve or ramp under ideal conditions. Go slower when the road is wet, icy, or dark."},
+{id:"sg24",t:"signs",s:"stopahead",q:"This sign tells you:",a:["There is a stop sign ahead","You must stop immediately","A traffic signal is ahead","The road ends"],e:"Stop Ahead warns that a stop sign may be hidden by a curve or hill. Begin slowing down."},
+{id:"sg25",t:"signs",s:"flagger",q:"When you see this sign, you should:",a:["Expect a flagger ahead and obey their signals","Stop and wait for a police officer","Change lanes immediately","Turn on your hazard lights"],e:"Flaggers control traffic in work zones. Their directions have the same authority as a sign or signal."},
+
+/* ---------- Signals & markings ---------- */
+{id:"sm01",t:"signals",q:"What must you do at a flashing red traffic light?",a:["Stop completely, then go when it is safe","Slow down and proceed with caution","Stop only if traffic is coming","Wait for the light to turn green"],e:"A flashing red light is treated the same as a stop sign."},
+{id:"sm02",t:"signals",q:"A flashing yellow light means:",a:["Slow down and proceed with caution","Stop and wait for green","The light is about to turn red","Pedestrians have the right of way only"],e:"A flashing yellow light warns of a hazard. You do not have to stop, but you should slow down and be alert."},
+{id:"sm03",t:"signals",q:"A flashing yellow left-turn arrow means you:",a:["May turn left after yielding to oncoming traffic and pedestrians","Have a protected left turn; oncoming traffic is stopped","Must stop and wait for a green arrow","May not turn left"],e:"Flashing yellow arrows allow left turns, but oncoming traffic still has the right of way. Wait for a safe gap."},
+{id:"sm04",t:"signals",q:"A steady yellow traffic light means:",a:["The light is about to turn red; stop if you can do so safely","Speed up to get through before it turns red","Proceed with caution; the light will stay yellow","Stop, then go if the way is clear"],e:"A steady yellow means the signal is changing. Stop if it is safe. If you are too close to stop safely, continue through carefully."},
+{id:"sm05",t:"signals",q:"You arrive at an intersection where the traffic lights are not working. You should:",a:["Treat it as an all-way stop","Proceed carefully without stopping","Yield only to traffic from the left","Wait for the lights to come back on"],e:"When a signal is dark, every driver must stop and then take turns, as at an all-way stop."},
+{id:"sm06",t:"signals",q:"Unless a sign prohibits it, you may turn right on a red light after you:",a:["Come to a complete stop and yield to pedestrians and traffic","Slow down and check for traffic","Wait for the light to turn yellow","Honk to warn pedestrians"],e:"Right on red is allowed in Minnesota after a full stop, unless a No Turn on Red sign is posted. Yield to everyone in the crosswalk and intersection."},
+{id:"sm07",t:"signals",q:"In Minnesota, you may turn left on a red light only when:",a:["Turning from a one-way street onto another one-way street going left, after stopping","The intersection is empty","You are in a left-turn lane on a two-way street","A police officer is not present"],e:"Left on red is allowed only from a one-way street onto a one-way street that moves to the left, after a full stop and unless a sign prohibits it."},
+{id:"sm08",t:"signals",q:"Yellow center lines separate:",a:["Traffic moving in opposite directions","Lanes moving in the same direction","The road from the shoulder on the right","Bike lanes from car lanes"],e:"Yellow lines divide opposing traffic. White lines divide lanes going the same way and mark the right edge of the road."},
+{id:"sm09",t:"signals",q:"White lane lines separate:",a:["Lanes of traffic moving in the same direction","Traffic moving in opposite directions","Two-way left-turn lanes","No-passing zones"],e:"Broken white lines mean you may change lanes when it is safe. Solid white lines discourage lane changes."},
+{id:"sm10",t:"signals",q:"On a two-lane road, a solid yellow line on your side of a broken yellow line means:",a:["You may not pass","You may pass when it is safe","Passing is allowed only during the day","You must stay on the shoulder"],e:"The line closest to you is the one that applies to you. A solid line on your side means no passing."},
+{id:"sm11",t:"signals",q:"A double solid yellow center line means:",a:["No passing in either direction","Passing is allowed in both directions","Passing is allowed for the lane next to the broken line","The road is about to become one-way"],e:"Double solid yellow lines mean neither direction may cross to pass."},
+{id:"sm12",t:"signals",q:"A center lane marked with a solid and a broken yellow line on both sides is:",a:["A two-way left-turn lane for traffic from both directions","A passing lane","A lane for buses only","A reversible express lane"],e:"Use this lane only to slow down and turn left. Do not use it to travel or to pass."},
+{id:"sm13",t:"signals",q:"A white diamond painted in a lane means:",a:["The lane is reserved for certain vehicles, such as carpools, buses, or E-ZPass users","The lane ends ahead","A railroad crossing is ahead","You may not change lanes"],e:"Diamond markings show a managed or reserved lane. Signs tell you who may use it and when."},
+{id:"sm14",t:"signals",q:"At a freeway ramp meter, you should:",a:["Wait for the green light; one vehicle goes per green unless signs say otherwise","Drive on the shoulder around the line","Go when the car in front goes","Ignore the signal if the freeway looks empty"],e:"Ramp meters space out vehicles entering the freeway. Stop at the line on red and go on green, one car at a time unless posted."},
+{id:"sm15",t:"signals",q:"A red X shown over a lane on an overhead signal means:",a:["Do not drive in that lane","The lane is for exiting only","The lane is open to trucks","Merge into that lane"],e:"Lane control signals: green arrow means the lane is open, yellow X means move out of the lane, red X means do not use it."},
+{id:"sm16",t:"signals",q:"A bicycle symbol with two arrows painted in a travel lane (a shared lane marking) means:",a:["Bicyclists may use the full lane; drivers must share it","Bikes are not allowed in this lane","The lane is for bicycles only","Drivers must stop for cyclists"],e:"Shared lane markings show where cyclists are expected to ride in a lane shared with cars."},
+
+/* ---------- Traffic laws ---------- */
+{id:"lw01",t:"laws",q:"Unless posted otherwise, the speed limit in a Minnesota urban district is:",a:["30 mph","25 mph","35 mph","40 mph"],e:"Urban districts default to 30 mph."},
+{id:"lw02",t:"laws",q:"The speed limit in an alley is:",a:["10 mph","5 mph","15 mph","20 mph"],e:"Minnesota law sets alleys at 10 mph."},
+{id:"lw03",t:"laws",q:"The speed limit on rural interstate highways in Minnesota is:",a:["70 mph","65 mph","75 mph","60 mph"],e:"Rural interstates are 70 mph. Urban interstates are 65 mph unless posted lower."},
+{id:"lw04",t:"laws",q:"On roads where no other limit is set or posted, the speed limit is:",a:["55 mph","45 mph","60 mph","65 mph"],e:"55 mph applies to other roads that are not otherwise posted."},
+{id:"lw05",t:"laws",q:"Can you get a ticket for driving under the posted speed limit?",a:["Yes, if your speed is unsafe for the conditions","No, the posted limit is the only rule","Only on interstate highways","Only at night"],e:"Minnesota's basic speed rule says you must never drive faster than is reasonable and safe for road, weather, and traffic conditions."},
+{id:"lw06",t:"laws",q:"You must signal your intention to turn at least how far before turning?",a:["100 feet","50 feet","200 feet","500 feet"],e:"Signal at least 100 feet before you turn so others know what you plan to do."},
+{id:"lw07",t:"laws",q:"Besides from sunset to sunrise, Minnesota requires your headlights to be on:",a:["Whenever your windshield wipers are in use","Only on interstate highways","Only in work zones","Only when driving in a city"],e:"Headlights are also required in rain, snow, sleet, or fog, any time you can't see 500 feet ahead, and any time your wipers are on."},
+{id:"lw08",t:"laws",q:"You must dim your high beams when an oncoming vehicle is within:",a:["1,000 feet","500 feet","200 feet","2,000 feet"],e:"Dim within 1,000 feet of oncoming traffic so you do not blind the other driver."},
+{id:"lw09",t:"laws",q:"You must dim your high beams when you are following another vehicle within:",a:["200 feet","100 feet","500 feet","1,000 feet"],e:"High beams reflect in the mirrors of the car ahead. Dim them within 200 feet."},
+{id:"lw10",t:"laws",q:"Under Minnesota's hands-free law, an adult driver may:",a:["Use a phone in voice-activated or one-touch mode without holding it","Hold the phone to make calls if driving slowly","Text while stopped at a red light","Watch videos if the phone is mounted"],e:"Drivers may not hold a phone. Hands-free calls, one-touch functions, and GPS are allowed. Texting, video, and holding the phone are not, even at a light."},
+{id:"lw11",t:"laws",q:"A driver under 18 with an instruction permit or provisional license may use a cell phone while driving:",a:["Only to call for help in an emergency","In hands-free mode","For GPS navigation","When a parent is in the car"],e:"Teen drivers on a permit or provisional license may not use a phone at all while driving, even hands-free, except to call 911 in an emergency."},
+{id:"lw12",t:"laws",q:"Who must wear a seat belt in Minnesota?",a:["The driver and every passenger, in every seat","Only the driver and front-seat passenger","Only passengers under 18","Only on highways"],e:"Minnesota's seat belt law covers everyone in every seating position, and officers can stop you for a seat belt violation alone."},
+{id:"lw13",t:"laws",q:"Minnesota law requires a child to ride in a car seat or booster until the child is:",a:["8 years old or 4 feet 9 inches tall, whichever comes first","5 years old","10 years old regardless of height","Able to buckle their own seat belt"],e:"Children under 8 who are shorter than 4 feet 9 inches must be in a child restraint that fits them."},
+{id:"lw14",t:"laws",q:"After a crash with injury, death, or property damage of $1,000 or more, if police did not investigate you must file a written report within:",a:["10 days","24 hours","30 days","60 days"],e:"Stop, give aid, exchange information, and notify police. If no officer investigated, send a written report to DVS within 10 days."},
+{id:"lw15",t:"laws",q:"You may not park within how many feet of a fire hydrant?",a:["10 feet","5 feet","20 feet","30 feet"],e:"Leave at least 10 feet so fire crews can reach the hydrant."},
+{id:"lw16",t:"laws",q:"You may not park within how many feet of a crosswalk at an intersection?",a:["20 feet","10 feet","30 feet","50 feet"],e:"Parking too close to a crosswalk blocks drivers' view of pedestrians."},
+{id:"lw17",t:"laws",q:"You may not park within how many feet of a stop sign or traffic signal on your approach?",a:["30 feet","20 feet","10 feet","50 feet"],e:"A parked car near a stop sign or signal can hide it from other drivers."},
+{id:"lw18",t:"laws",q:"You may not park within how many feet of the nearest rail of a railroad crossing?",a:["50 feet","20 feet","30 feet","100 feet"],e:"Keep railroad crossings clear and visible."},
+{id:"lw19",t:"laws",q:"When parking downhill next to a curb, turn your front wheels:",a:["Toward the curb","Away from the curb","Straight ahead","It does not matter if the parking brake is set"],e:"If the car rolls, the curb stops it. Uphill with a curb, turn the wheels away from the curb. With no curb, turn toward the edge of the road."},
+{id:"lw20",t:"laws",q:"Before leaving your vehicle unattended, you must:",a:["Stop the engine, set the brake, and remove the key","Leave it running if you will be back soon","Turn on your hazard lights","Roll the windows down"],e:"Minnesota law requires you to shut off the engine, lock the ignition, and remove the key when you leave a vehicle."},
+{id:"lw21",t:"laws",q:"On a highway with two or more lanes in your direction, you should:",a:["Drive in the right lane except to pass","Drive in the left lane at all times","Drive in whichever lane is emptiest","Stay in the center lane"],e:"Keep right except to pass. Slower traffic should use the right lane."},
+{id:"lw22",t:"laws",q:"On a two-lane road, you may not pass within 100 feet of:",a:["An intersection or railroad crossing","A parked car","A mailbox","A speed limit sign"],e:"Passing near intersections, railroad crossings, bridges, and tunnels is not allowed because vehicles may enter or your view is limited."},
+{id:"lw23",t:"laws",q:"When a work zone has two lanes merging into one, Minnesota recommends the zipper merge. This means:",a:["Use both lanes until the merge point, then take turns","Merge as early as possible and leave the closed lane empty","Stop and wait for a gap","Let trucks go first"],e:"Using both lanes to the merge point and alternating shortens backups and reduces speed differences between lanes."},
+{id:"lw24",t:"laws",q:"In a roundabout, traffic travels:",a:["Counterclockwise, to the right around the center island","Clockwise, to the left around the center island","In whichever direction is shortest","Straight through the center island"],e:"Enter to the right, yield to traffic already in the roundabout, and signal before your exit."},
+{id:"lw25",t:"laws",q:"When entering a roundabout, you must yield to:",a:["Traffic already in the roundabout and pedestrians in the crosswalk","Traffic waiting to enter on your right","No one; entering traffic has the right of way","Only large trucks"],e:"Vehicles already circulating have the right of way. Wait for a gap."},
+{id:"lw26",t:"laws",q:"When making a left turn from a two-way street onto a two-way street, you should turn:",a:["From the lane nearest the center line into the lane just right of the center line","From the right lane into the far right lane","From any lane into any lane","From the center line into the left lane"],e:"Start and finish your left turn as close to the center as possible without crossing into oncoming lanes."},
+{id:"lw27",t:"laws",q:"Minnesota recommends a following distance of at least:",a:["3 seconds","1 second","2 car lengths at any speed","10 feet"],e:"Pick a fixed object. When the car ahead passes it, count. You should not reach it before three seconds. Add more time in bad weather."},
+{id:"lw28",t:"laws",q:"Before changing lanes, you should:",a:["Signal, check your mirrors, and look over your shoulder at your blind spot","Check only your rear-view mirror","Honk to let others know","Slow down sharply"],e:"Mirrors do not show everything. A quick shoulder check covers the blind spot."},
+{id:"lw29",t:"laws",q:"Minnesota requires drivers to carry:",a:["Proof of vehicle insurance","A copy of their birth certificate","A spare key","A paper road map"],e:"All vehicles must be insured, and you must be able to show proof of insurance when asked."},
+{id:"lw30",t:"laws",q:"You may pass another vehicle on the right when:",a:["It is turning left and there is room without leaving the paved road","It is going slowly on a two-lane road, using the shoulder","You are in a hurry","Never, under any circumstances"],e:"Passing on the right is allowed only in specific cases, such as when the car ahead is turning left or on roads with two or more lanes in your direction. Never use the shoulder."},
+
+/* ---------- Right of way & sharing ---------- */
+{id:"rw01",t:"row",q:"Two vehicles arrive at an uncontrolled intersection at the same time. Who has the right of way?",a:["The vehicle on the right","The vehicle on the left","The larger vehicle","The vehicle going straight"],e:"With no signs or signals, yield to the vehicle on your right if you arrive at the same time."},
+{id:"rw02",t:"row",q:"At an all-way stop, two vehicles stop at the same time. Who goes first?",a:["The vehicle on the right","The vehicle on the left","The vehicle that honks first","The vehicle turning left"],e:"The first to stop goes first. If you stop at the same time, the driver on the left yields to the driver on the right."},
+{id:"rw03",t:"row",q:"When turning left at an intersection with a green light, you must yield to:",a:["Oncoming traffic and pedestrians","No one, because the light is green","Only vehicles turning right","Traffic behind you"],e:"A green ball lets you go, but left-turning drivers must wait for a safe gap in oncoming traffic and crosswalks."},
+{id:"rw04",t:"row",q:"When pulling out of a driveway or alley onto a street, you must:",a:["Stop before the sidewalk and yield to pedestrians and traffic","Honk and pull out slowly","Stop only if a car is coming","Yield only to pedestrians"],e:"Stop before crossing the sidewalk area, then yield to vehicles on the street."},
+{id:"rw05",t:"row",q:"An ambulance with lights and siren is coming toward you. You should:",a:["Pull to the right edge of the road and stop until it passes","Speed up to get out of its way","Stop in your lane immediately","Keep driving at the same speed"],e:"Pull as far right as you safely can and stop. Do not stop in an intersection; clear it first."},
+{id:"rw06",t:"row",q:"How close may you follow a fire truck that is answering an emergency call?",a:["No closer than 500 feet","No closer than 100 feet","No closer than 50 feet","Any distance if you drive carefully"],e:"Stay back at least 500 feet behind emergency vehicles that are responding to a call."},
+{id:"rw07",t:"row",q:"Minnesota's Move Over law says when you approach a stopped emergency vehicle, tow truck, or road maintenance vehicle with flashing lights, you must:",a:["Move one lane away if safe; if you can't, slow down","Stop behind it until it leaves","Honk to let workers know you are passing","Speed up to pass quickly"],e:"Give stopped responders space. On roads with two or more lanes in your direction, move over a lane. If that isn't possible, slow down and pass with caution."},
+{id:"rw08",t:"row",q:"A school bus ahead has its stop arm out and red lights flashing. On a road with no median, you must:",a:["Stop at least 20 feet away, whether you are behind it or coming toward it","Stop only if you are behind the bus","Slow to 10 mph and pass carefully","Stop only if you see children"],e:"Traffic in both directions must stop at least 20 feet from the bus and stay stopped until the arm is pulled in and the red lights stop flashing. On a road divided by a median, oncoming traffic does not have to stop."},
+{id:"rw09",t:"row",q:"A school bus is flashing its amber (yellow) lights. This means:",a:["It is preparing to stop; slow down and get ready to stop","You may pass it quickly before it stops","It is broken down","Children are not allowed to cross"],e:"Amber lights come on before the red lights and stop arm. Prepare to stop."},
+{id:"rw10",t:"row",q:"A pedestrian is crossing at a crosswalk with no traffic signal. You must:",a:["Stop and let them cross","Honk and go around them","Proceed if they are not in your lane yet","Yield only if the crosswalk is marked"],e:"Drivers must stop for pedestrians in marked and unmarked crosswalks."},
+{id:"rw11",t:"row",q:"A vehicle in the lane next to you has stopped at a crosswalk. You should:",a:["Stop too; do not pass it","Pass it carefully","Honk to warn the driver","Change lanes and continue"],e:"A stopped car often means someone is crossing in front of it, out of your view. Passing it is illegal and dangerous."},
+{id:"rw12",t:"row",q:"A pedestrian is using a white cane or a guide dog. You must:",a:["Always yield to them","Yield only in a crosswalk","Honk to let them know you are there","Yield only at a traffic light"],e:"Always stop for a person who is blind or visually impaired, wherever they are crossing."},
+{id:"rw13",t:"row",q:"When passing a bicyclist, Minnesota law requires you to leave at least:",a:["3 feet of space","1 foot of space","6 inches of space","The width of a bike lane"],e:"Give at least 3 feet between your vehicle and the cyclist. Move into the next lane if you need to and it is safe."},
+{id:"rw14",t:"row",q:"You are turning right across a bike lane. You must:",a:["Yield to bicyclists in the bike lane","Speed up to turn ahead of them","Honk and turn","Turn from the lane to the left of the bike lane without looking"],e:"Check for cyclists, signal, and merge into the bike lane only when it is clear, close to the corner."},
+{id:"rw15",t:"row",q:"A motorcycle in front of you is in your lane. You should:",a:["Treat it like any vehicle; it is entitled to the full lane","Pass it within the same lane","Drive beside it in the same lane","Follow closely so it stays in view"],e:"Motorcycles get a full lane. Never share a lane with one, and leave extra following distance."},
+{id:"rw16",t:"row",q:"If you cannot see a truck driver's face in the truck's side mirror:",a:["The driver probably cannot see you","The truck is too far away to matter","You are in a safe spot","The driver can see you"],e:"Large trucks have big blind spots, called No-Zones, on all four sides. Don't linger in them."},
+{id:"rw17",t:"row",q:"A large truck ahead is signaling a right turn and swings left first. You should:",a:["Stay back and never try to squeeze between the truck and the curb","Pass it on the right","Honk so the driver moves over","Move up beside it"],e:"Trucks need room to make wide right turns. Stay behind until the turn is complete."},
+{id:"rw18",t:"row",q:"A funeral procession is passing through an intersection. You should:",a:["Yield and let the whole procession pass","Join the end of the procession","Cut through between vehicles when there is a gap","Honk to let them know you are waiting"],e:"Funeral processions have the right of way. Do not cut in or pass through them."},
+{id:"rw19",t:"row",q:"When driving behind a snowplow, you should:",a:["Stay well back and be patient; plows stop and turn often","Pass it on the right where the road is cleared","Follow closely in its cleared path","Flash your lights so the driver pulls over"],e:"Plow drivers have limited visibility and may stop or move sideways. The road ahead of a plow is usually worse than the road behind it."},
+{id:"rw20",t:"row",q:"When a train is approaching a crossing, you must stop no closer than how far from the nearest rail?",a:["10 feet","2 feet","100 feet","5 feet"],e:"Stop between 10 and 50 feet from the nearest rail and wait for the train to pass."},
+{id:"rw21",t:"row",q:"Your vehicle stalls on railroad tracks and a train is coming. You should:",a:["Get everyone out immediately and move away from the tracks toward the train","Try to restart the engine","Stay in the car with seat belts on","Push the car off the tracks"],e:"Leave the vehicle at once. Move away from the tracks at an angle toward the oncoming train so you avoid flying debris. Then call the number on the blue sign at the crossing or 911."},
+{id:"rw22",t:"row",q:"After a train passes a crossing with more than one track, you should:",a:["Check for a second train before crossing","Go immediately once the gates start to rise","Honk and go","Cross only if a police officer waves you on"],e:"A second train can be hidden by the first. Wait until you can see clearly in both directions."},
+{id:"rw23",t:"row",q:"When entering a freeway from a ramp, you should:",a:["Use the acceleration lane to match traffic speed and yield to freeway traffic","Stop at the end of the ramp and wait for a gap","Merge immediately at a slow speed","Expect freeway traffic to let you in"],e:"Freeway traffic has the right of way. Get up to speed on the ramp and merge into a safe gap."},
+{id:"rw24",t:"row",q:"You come up behind a horse-drawn buggy on a rural road. You should:",a:["Slow down, give plenty of room, and pass only when safe and legal","Honk so the driver pulls over","Pass quickly to avoid scaring the horse","Follow closely until the road widens"],e:"Horses can be startled by noise and speed. Pass slowly with plenty of space."},
+
+/* ---------- Impaired driving ---------- */
+{id:"dw01",t:"dwi",q:"For a driver age 21 or older, the legal alcohol concentration limit is:",a:["0.08","0.10","0.05","0.04"],e:"Driving with 0.08 or more is a DWI. You can also be charged below 0.08 if you are impaired."},
+{id:"dw02",t:"dwi",q:"For drivers under age 21, Minnesota law allows an alcohol concentration of:",a:["Zero; any amount is illegal","Up to 0.02","Up to 0.04","Up to 0.08"],e:"Minnesota has a 'Not a Drop' law. Drivers under 21 may not drive after drinking any alcohol at all."},
+{id:"dw03",t:"dwi",q:"An alcohol concentration of 0.16 or more, twice the legal limit, leads to:",a:["Tougher penalties as an aggravating factor","The same penalties as 0.08","Only a warning for first offenses","A fine but no license action"],e:"A test result of 0.16 or more brings harsher consequences such as longer revocation and plate impoundment."},
+{id:"dw04",t:"dwi",q:"Minnesota's implied consent law means:",a:["By driving, you have agreed to a chemical test if an officer suspects DWI","You must consent before an officer can stop you","You may refuse a test with no penalty","Passengers must also be tested"],e:"Refusing a breath test is itself a crime in Minnesota and leads to license revocation."},
+{id:"dw05",t:"dwi",q:"What is the only thing that lowers your alcohol concentration?",a:["Time","Black coffee","A cold shower","Eating a large meal"],e:"Your body removes alcohol at a steady rate. Coffee, food, and fresh air do not speed it up."},
+{id:"dw06",t:"dwi",q:"Having an open container of alcohol in the passenger area of a vehicle on a public road is:",a:["Illegal, even if the driver has not been drinking","Legal if the driver is sober","Legal for passengers over 21","Legal if the container is half empty"],e:"Open containers must be kept in the trunk, or in an area not normally occupied by the driver and passengers if the vehicle has no trunk."},
+{id:"dw07",t:"dwi",q:"Which ability does alcohol usually affect first?",a:["Judgment","Vision","Hearing","Muscle strength"],e:"Alcohol impairs judgment early, so drinkers often feel they can drive safely when they cannot."},
+{id:"dw08",t:"dwi",q:"Driving after using cannabis or prescription drugs that impair you is:",a:["A DWI, the same as driving drunk","Legal if the drug is legal","Legal with a doctor's note","Only a petty misdemeanor"],e:"Minnesota's DWI law covers alcohol, cannabis, controlled substances, and any other drug that impairs your driving."},
+{id:"dw09",t:"dwi",q:"Combining alcohol with other drugs, including some cold medicines:",a:["Can multiply the effects of both","Cancels out the effects of the alcohol","Has no effect on driving","Makes you more alert"],e:"Mixing alcohol with other drugs is especially dangerous. Read medicine labels for driving warnings."},
+{id:"dw10",t:"dwi",q:"The alcohol concentration limit for a person driving a commercial motor vehicle is:",a:["0.04","0.08","0.02","0.10"],e:"Commercial drivers are held to a lower 0.04 limit."},
+{id:"dw11",t:"dwi",q:"A friend has been drinking and wants to drive home. The best thing to do is:",a:["Take their keys and arrange another ride","Let them drive slowly","Give them coffee and let them go","Follow them home in your car"],e:"Help them find a sober driver, a taxi or rideshare, or a place to stay."},
+
+/* ---------- Safe driving & weather ---------- */
+{id:"sd01",t:"safe",q:"Your car begins to skid on an icy road. You should:",a:["Ease off the gas and steer in the direction you want the car to go","Brake hard","Steer the opposite way you want to go","Accelerate to regain traction"],e:"Stay calm, take your foot off the gas, and look and steer where you want to go. Avoid sudden braking."},
+{id:"sd02",t:"safe",q:"How should you brake in an emergency if your car has anti-lock brakes (ABS)?",a:["Press firmly and hold steady pressure; do not pump","Pump the brakes rapidly","Tap the brakes lightly","Use only the parking brake"],e:"ABS pumps the brakes for you. Keep firm pressure and steer. You may feel the pedal pulse; that is normal."},
+{id:"sd03",t:"safe",q:"Your car starts to hydroplane on a wet road. You should:",a:["Ease off the gas and keep the wheel straight; avoid hard braking","Brake hard right away","Speed up to get through the water","Turn the wheel sharply"],e:"Hydroplaning happens when tires ride on water. Slowing gently lets them regain contact with the road."},
+{id:"sd04",t:"safe",q:"Which surface is most likely to freeze first in winter?",a:["Bridges and overpasses","Roads in the sun","Gravel shoulders","Parking ramps with roofs"],e:"Bridges lose heat from above and below, so they ice over before the rest of the road."},
+{id:"sd05",t:"safe",q:"Black ice is dangerous because it:",a:["Looks like wet pavement and is hard to see","Is always visible as white patches","Only forms on gravel roads","Only forms during snowfall"],e:"Black ice is a thin, clear layer of ice. Be cautious when temperatures are near freezing and the road looks wet."},
+{id:"sd06",t:"safe",q:"When driving in fog, you should use:",a:["Low-beam headlights","High-beam headlights","Parking lights only","Hazard lights while moving"],e:"High beams reflect off fog and make it harder to see. Use low beams and slow down."},
+{id:"sd07",t:"safe",q:"If you are stranded in your car during a blizzard, you should usually:",a:["Stay with your vehicle and keep the exhaust pipe clear of snow","Walk to find help","Run the engine nonstop with windows closed","Sleep without checking the exhaust"],e:"Your car is shelter and is easier for rescuers to find. Run the engine for short periods, keep the exhaust clear, and crack a window to avoid carbon monoxide."},
+{id:"sd08",t:"safe",q:"A deer jumps onto the road in front of you. The safest action is usually to:",a:["Brake firmly and stay in your lane","Swerve sharply to miss it","Speed up","Swerve onto the shoulder"],e:"Swerving can send you into oncoming traffic, a ditch, or a tree. Those crashes are often worse than hitting the deer."},
+{id:"sd09",t:"safe",q:"A front tire blows out while you are driving. You should:",a:["Hold the wheel firmly, ease off the gas, and slow down gradually","Brake hard immediately","Turn sharply onto the shoulder","Speed up to keep control"],e:"A blowout can pull the car to one side. Keep a firm grip, let the car slow, and pull off when it is under control."},
+{id:"sd10",t:"safe",q:"You feel very drowsy while driving. What helps?",a:["Pull over in a safe place and rest","Turn up the radio","Open the window","Drink an energy drink and keep going"],e:"Only sleep cures drowsiness. Tricks like cold air or loud music do not keep you safe."},
+{id:"sd11",t:"safe",q:"'Overdriving your headlights' means:",a:["Driving so fast you cannot stop within the distance your headlights light up","Using high beams in the city","Driving with a burned-out headlight","Leaving headlights on during the day"],e:"At night, keep your speed low enough to stop within the area your lights show."},
+{id:"sd12",t:"safe",q:"If your brakes fail, you should first:",a:["Pump the brake pedal, shift to a lower gear, and carefully use the parking brake","Turn the engine off","Shift into park","Steer off the road immediately"],e:"Pumping may build pressure. Downshifting and gently applying the parking brake help slow the car."},
+{id:"sd13",t:"safe",q:"Why should you sit at least 10 inches from the steering wheel?",a:["To reduce injury from the airbag if it deploys","To see the gauges better","To reach the pedals more easily","It is required for the road test only"],e:"Airbags inflate with great force. Sitting back and holding the wheel at about 9 and 3 o'clock keeps you safer."},
+{id:"sd14",t:"safe",q:"Roads are often most slippery:",a:["During the first few minutes of a rain","After it has rained for several hours","On hot, dry days","Right after the road is plowed and salted"],e:"Rain mixes with oil on the road at first. Later rain washes it away."},
+{id:"sd15",t:"safe",q:"To avoid the glare of oncoming headlights at night, look:",a:["Toward the right edge of your lane","Directly at the headlights","At the center line","At your dashboard"],e:"Watching the right edge line keeps you on course without being blinded."},
+{id:"sd16",t:"safe",q:"Using cruise control is a bad idea when:",a:["The road is wet, icy, or snowy","You are on a dry interstate","Traffic is light","It is daytime"],e:"Cruise control can make it harder to react when tires lose traction."},
+{id:"sd17",t:"safe",q:"Your car breaks down on a freeway. You should:",a:["Move onto the shoulder as far as possible and turn on your hazard lights","Stop in your lane and wait","Walk across the freeway for help","Leave the car in the lane and walk away"],e:"Get off the traveled lanes if you can, use your flashers, and stay buckled in if it is unsafe to get out."},
+{id:"sd18",t:"safe",q:"Another driver tailgates you and flashes their lights. You should:",a:["Stay calm, avoid eye contact, and let them pass when you safely can","Brake suddenly to warn them","Speed up to get away","Gesture back at them"],e:"Don't engage an aggressive driver. Give them room to get by."},
+{id:"sd19",t:"safe",q:"A good habit is to scan the road ahead at least:",a:["12 seconds ahead","2 seconds ahead","Only to the car in front of you","1 block ahead in all cases"],e:"Looking well ahead gives you time to spot hazards and react smoothly."},
+{id:"sd20",t:"safe",q:"Which item is most important to carry in a winter survival kit?",a:["Warm clothes or blankets, plus a flashlight and snacks","A spare set of summer tires","A portable grill","Extra windshield washer only"],e:"Minnesota winters can strand drivers. Keep blankets, boots, gloves, a flashlight, water, snacks, a shovel, and a charged phone in your car."},
+
+/* ---------- Permits & licensing ---------- */
+{id:"gd01",t:"gdl",q:"What is the youngest age you can get an instruction permit in Minnesota?",a:["15, after completing classroom driver's education","14","16","15 and a half"],e:"Teens can apply at 15 once they have completed the classroom portion of driver's ed and are enrolled in behind-the-wheel training."},
+{id:"gd02",t:"gdl",q:"A driver under 18 must hold an instruction permit for at least how long before taking the road test?",a:["6 months","3 months","1 year","30 days"],e:"Teens must have the permit for at least six months, with no violations, before the road test."},
+{id:"gd03",t:"gdl",q:"How many hours of supervised driving must a teen complete before the road test (when a parent did not take the supplemental class)?",a:["50 hours, including 15 at night","30 hours, including 5 at night","40 hours, none at night required","100 hours"],e:"The requirement drops to 40 hours (15 at night) if a parent or guardian completes the supplemental parent class."},
+{id:"gd04",t:"gdl",q:"A permit holder under 18 may drive with:",a:["A licensed driver age 21 or older, a parent or guardian, or a driving instructor in the front seat","Any licensed driver","A friend who has a provisional license","No one if driving in daylight"],e:"The supervising driver must sit in the front passenger seat."},
+{id:"gd05",t:"gdl",q:"During the first six months of a provisional license, you may not drive between:",a:["Midnight and 5 a.m., with some exceptions","10 p.m. and 6 a.m.","9 p.m. and 5 a.m.","There is no night restriction"],e:"Exceptions include driving with a licensed driver 25 or older, driving to or from work or school events, and work-related driving."},
+{id:"gd06",t:"gdl",q:"During the first six months of a provisional license, how many passengers under 20 who are not immediate family may ride with you, without a parent along?",a:["One","None","Two","Three"],e:"Months 1 to 6: no more than one passenger under 20 who isn't family. Months 7 to 12: no more than three."},
+{id:"gd07",t:"gdl",q:"During the second six months of a provisional license, you may carry no more than how many passengers under 20 who are not family?",a:["Three","One","Two","Five"],e:"The passenger limit rises to three during months 7 through 12, unless a parent or guardian is in the car."},
+{id:"gd08",t:"gdl",q:"After you move, you must tell Driver and Vehicle Services your new address within:",a:["30 days","10 days","60 days","1 year"],e:"You can update your address online or at a license office."},
+{id:"gd09",t:"gdl",q:"Minnesota's knowledge test has how many questions, and how many must you answer correctly?",a:["40 questions; 32 correct to pass","30 questions; 24 correct","50 questions; 40 correct","25 questions; 20 correct"],e:"The test is 40 multiple-choice questions with a passing score of 80 percent."}
+];
+
+/* Sign flashcards */
+const CARDS = [
+ {s:"stop",n:"Stop",m:"Come to a complete stop. Go only when the way is clear."},
+ {s:"yield",n:"Yield",m:"Slow down and give the right of way. Stop if needed."},
+ {s:"dne",n:"Do Not Enter",m:"You may not drive onto this road or ramp."},
+ {s:"wrongway",n:"Wrong Way",m:"You are driving against traffic. Turn around safely."},
+ {s:"speed",n:"Speed Limit",m:"Regulatory sign. The maximum legal speed in good conditions."},
+ {s:"school",n:"School Zone",m:"Pentagon shape. Watch for children; obey school speed limits."},
+ {s:"rradv",n:"Railroad Ahead",m:"Round warning sign. A railroad crossing is ahead."},
+ {s:"crossbuck",n:"Railroad Crossbuck",m:"Marks the crossing. Yield to trains; stop if one is coming."},
+ {s:"nopass",n:"No Passing Zone",m:"Pennant on the left side of the road. No passing begins here."},
+ {s:"curve",n:"Curve Ahead",m:"Warning: the road curves in the direction shown."},
+ {s:"curve35",n:"Curve with Advisory Speed",m:"The safe speed for the curve in ideal conditions."},
+ {s:"merge",n:"Merge",m:"Traffic will enter your lane from the side shown."},
+ {s:"signal",n:"Signal Ahead",m:"A traffic light is ahead. Be ready to stop."},
+ {s:"stopahead",n:"Stop Ahead",m:"A stop sign is ahead, possibly out of view."},
+ {s:"twoway",n:"Two-Way Traffic",m:"Oncoming traffic shares the road ahead."},
+ {s:"divided",n:"Divided Highway",m:"A median splits the road ahead. Keep right."},
+ {s:"keepright",n:"Keep Right",m:"Pass to the right of the island or obstruction."},
+ {s:"nouturn",n:"No U-Turn",m:"U-turns are prohibited here."},
+ {s:"noleft",n:"No Left Turn",m:"Left turns are prohibited here."},
+ {s:"roadwork",n:"Road Work Ahead",m:"Orange means a work zone. Slow down; watch for workers."},
+ {s:"flagger",n:"Flagger Ahead",m:"A worker is directing traffic. Obey their signals."},
+ {s:"hospital",n:"Hospital",m:"Blue service sign. A hospital is nearby."},
+ {s:"smv",n:"Slow-Moving Vehicle",m:"Shown on farm equipment and buggies. Slow down early."}
+];
+
+/* Road sign artwork, drawn as SVG from MUTCD shapes and colors (public-domain designs). */
+const SIGN_COLORS = { red:"#c8102e", yellow:"#f6c400", orange:"#f47b20", green:"#00754a", blue:"#1f4fa3", black:"#111", white:"#fff", fy:"#c6e000" };
+function signSVG(id, label) {
+  const C = SIGN_COLORS, F = 'font-family="Overpass, Arial Narrow, Arial, sans-serif" font-weight="800" text-anchor="middle"';
+  const diamond = (fill, inner) => `<rect x="18" y="18" width="64" height="64" rx="5" transform="rotate(45 50 50)" fill="${fill}" stroke="${C.black}" stroke-width="2.5"/><rect x="21.5" y="21.5" width="57" height="57" rx="3" transform="rotate(45 50 50)" fill="none" stroke="${C.black}" stroke-width="1.6"/>${inner||""}`;
+  const square = inner => `<rect x="14" y="14" width="72" height="72" rx="5" fill="${C.white}" stroke="${C.black}" stroke-width="2.5"/>${inner}`;
+  const prohibit = `<circle cx="50" cy="50" r="27" fill="none" stroke="${C.red}" stroke-width="6"/><line x1="31" y1="69" x2="69" y2="31" stroke="${C.red}" stroke-width="6"/>`;
+  const arrowHead = (x,y,rot) => `<polygon points="0,-9 8,4 -8,4" transform="translate(${x} ${y}) rotate(${rot})" fill="${C.black}"/>`;
+  let body = "";
+  switch (id) {
+    case "stop": {
+      const pts = [];
+      for (let i=0;i<8;i++){const a=Math.PI/8+i*Math.PI/4;pts.push((50+40*Math.cos(a)).toFixed(1)+","+(50+40*Math.sin(a)).toFixed(1));}
+      const pts2 = []; for (let i=0;i<8;i++){const a=Math.PI/8+i*Math.PI/4;pts2.push((50+36*Math.cos(a)).toFixed(1)+","+(50+36*Math.sin(a)).toFixed(1));}
+      body = `<polygon points="${pts.join(" ")}" fill="${C.white}"/><polygon points="${pts2.join(" ")}" fill="${C.red}"/><text x="50" y="58" ${F} font-size="22" fill="${C.white}">STOP</text>`; break; }
+    case "yield":
+      body = `<polygon points="10,16 90,16 50,88" fill="${C.red}" stroke-linejoin="round"/><polygon points="25,25 75,25 50,69" fill="${C.white}"/><text x="50" y="42" ${F} font-size="11" fill="${C.red}">YIELD</text>`; break;
+    case "dne":
+      body = `<rect x="12" y="12" width="76" height="76" fill="${C.white}" stroke="#999" stroke-width="1"/><circle cx="50" cy="50" r="34" fill="${C.red}"/><rect x="24" y="44" width="52" height="12" fill="${C.white}"/><text x="50" y="38" ${F} font-size="10" fill="${C.white}">DO NOT</text><text x="50" y="71" ${F} font-size="10" fill="${C.white}">ENTER</text>`; break;
+    case "wrongway":
+      body = `<rect x="8" y="26" width="84" height="48" rx="4" fill="${C.red}"/><rect x="11" y="29" width="78" height="42" rx="3" fill="none" stroke="${C.white}" stroke-width="1.6"/><text x="50" y="47" ${F} font-size="14" fill="${C.white}">WRONG</text><text x="50" y="64" ${F} font-size="14" fill="${C.white}">WAY</text>`; break;
+    case "speed":
+      body = `<rect x="22" y="8" width="56" height="84" rx="4" fill="${C.white}" stroke="${C.black}" stroke-width="2.5"/><text x="50" y="27" ${F} font-size="11" fill="${C.black}">SPEED</text><text x="50" y="40" ${F} font-size="11" fill="${C.black}">LIMIT</text><text x="50" y="76" ${F} font-size="30" fill="${C.black}">55</text>`; break;
+    case "school":
+      body = `<polygon points="50,8 88,40 88,92 12,92 12,40" fill="${C.fy}" stroke="${C.black}" stroke-width="2.5" stroke-linejoin="round"/><g fill="${C.black}"><circle cx="40" cy="44" r="5"/><path d="M34 52h12l3 16-4 1-3-9-1 20h-4l-1-12-2 12h-4l2-20-3 8-3-1z"/><circle cx="62" cy="48" r="4.5"/><path d="M57 55h10l2 13-3 1-2-7-1 16h-3l-1-10-1 10h-3l1-16-2 7-3-1z"/></g>`; break;
+    case "rradv":
+      body = `<circle cx="50" cy="50" r="40" fill="${C.yellow}" stroke="${C.black}" stroke-width="2.5"/><line x1="24" y1="24" x2="76" y2="76" stroke="${C.black}" stroke-width="6"/><line x1="76" y1="24" x2="24" y2="76" stroke="${C.black}" stroke-width="6"/><text x="30" y="58" ${F} font-size="16" fill="${C.black}">R</text><text x="70" y="58" ${F} font-size="16" fill="${C.black}">R</text>`; break;
+    case "crossbuck":
+      body = `<rect x="6" y="42" width="88" height="16" rx="2" fill="${C.white}" stroke="${C.black}" stroke-width="2" transform="rotate(38 50 50)"/><rect x="6" y="42" width="88" height="16" rx="2" fill="${C.white}" stroke="${C.black}" stroke-width="2" transform="rotate(-38 50 50)"/><text x="24" y="53" ${F} font-size="6.5" fill="${C.black}" transform="rotate(38 50 50)">RAILROAD</text><text x="76" y="53" ${F} font-size="6.5" fill="${C.black}" transform="rotate(-38 50 50)">CROSSING</text>`; break;
+    case "nopass":
+      body = `<polygon points="6,22 94,50 6,78" fill="${C.yellow}" stroke="${C.black}" stroke-width="2.5" stroke-linejoin="round"/><text x="31" y="44" ${F} font-size="8.5" fill="${C.black}">NO</text><text x="31" y="54" ${F} font-size="8.5" fill="${C.black}">PASSING</text><text x="31" y="64" ${F} font-size="8.5" fill="${C.black}">ZONE</text>`; break;
+    case "curve":
+      body = diamond(C.yellow, `<path d="M44 72 V52 Q44 36 58 32" fill="none" stroke="${C.black}" stroke-width="6"/>${arrowHead(60,31,70)}`); break;
+    case "curve35":
+      body = `<g transform="translate(50 37) scale(.7) translate(-50 -50)">${diamond(C.yellow, `<path d="M44 72 V52 Q44 36 58 32" fill="none" stroke="${C.black}" stroke-width="6"/>${arrowHead(60,31,70)}`)}</g><rect x="30" y="73" width="40" height="23" rx="3" fill="${C.yellow}" stroke="${C.black}" stroke-width="2"/><text x="50" y="84" ${F} font-size="9" fill="${C.black}">35</text><text x="50" y="93" ${F} font-size="7" fill="${C.black}">MPH</text>`; break;
+    case "merge":
+      body = diamond(C.yellow, `<line x1="54" y1="76" x2="54" y2="30" stroke="${C.black}" stroke-width="6"/>${arrowHead(54,27,0)}<path d="M36 72 Q38 56 52 48" fill="none" stroke="${C.black}" stroke-width="5"/>`); break;
+    case "signal":
+      body = diamond(C.yellow, `<rect x="41" y="26" width="18" height="48" rx="3" fill="${C.black}"/><circle cx="50" cy="35" r="5" fill="${C.red}"/><circle cx="50" cy="50" r="5" fill="${C.yellow}"/><circle cx="50" cy="65" r="5" fill="#2bb24c"/>`); break;
+    case "stopahead": {
+      const pts=[];for(let i=0;i<8;i++){const a=Math.PI/8+i*Math.PI/4;pts.push((50+10*Math.cos(a)).toFixed(1)+","+(38+10*Math.sin(a)).toFixed(1));}
+      body = diamond(C.yellow, `<polygon points="${pts.join(" ")}" fill="${C.red}"/><line x1="50" y1="78" x2="50" y2="56" stroke="${C.black}" stroke-width="6"/>${arrowHead(50,54,0)}`); break; }
+    case "twoway":
+      body = diamond(C.yellow, `<line x1="42" y1="74" x2="42" y2="34" stroke="${C.black}" stroke-width="5"/>${arrowHead(42,30,0)}<line x1="58" y1="26" x2="58" y2="66" stroke="${C.black}" stroke-width="5"/>${arrowHead(58,70,180)}`); break;
+    case "divided":
+      body = diamond(C.yellow, `<path d="M40 80 V58 L32 48 V22 M60 80 V58 L68 48 V22" fill="none" stroke="${C.black}" stroke-width="5"/><path d="M50 60 L44 50 V26 H56 V50 Z" fill="${C.black}"/>`); break;
+    case "keepright":
+      body = `<rect x="20" y="8" width="60" height="84" rx="4" fill="${C.white}" stroke="${C.black}" stroke-width="2.5"/><rect x="34" y="60" width="16" height="24" rx="8" fill="${C.black}"/><path d="M42 18 V38 Q42 46 56 52 V62" fill="none" stroke="${C.black}" stroke-width="5"/>${arrowHead(56,66,180)}`; break;
+    case "nouturn":
+      body = square(`<path d="M58 72 V44 Q58 32 48 32 Q38 32 38 44 V54" fill="none" stroke="${C.black}" stroke-width="6"/>${arrowHead(38,58,180)}${prohibit}`); break;
+    case "noleft":
+      body = square(`<path d="M58 74 V48 H40" fill="none" stroke="${C.black}" stroke-width="6"/>${arrowHead(36,48,-90)}${prohibit}`); break;
+    case "roadwork":
+      body = diamond(C.orange, `<text x="50" y="44" ${F} font-size="10" fill="${C.black}">ROAD</text><text x="50" y="56" ${F} font-size="10" fill="${C.black}">WORK</text><text x="50" y="68" ${F} font-size="10" fill="${C.black}">AHEAD</text>`); break;
+    case "flagger":
+      body = diamond(C.orange, `<g fill="${C.black}"><circle cx="46" cy="30" r="5"/><path d="M41 37h10l2 16h-3l-1 22h-4l-1-14-1 14h-4l-1-22h-2z"/><rect x="53" y="38" width="3" height="20"/><rect x="55" y="34" width="12" height="9" fill="${C.red}" stroke="${C.black}" stroke-width="1"/></g>`); break;
+    case "hospital":
+      body = `<rect x="14" y="14" width="72" height="72" rx="6" fill="${C.blue}"/><rect x="18" y="18" width="64" height="64" rx="4" fill="none" stroke="${C.white}" stroke-width="2"/><text x="50" y="67" ${F} font-size="46" fill="${C.white}">H</text>`; break;
+    case "smv":
+      body = `<polygon points="50,12 92,84 8,84" fill="${C.red}" stroke-linejoin="round"/><polygon points="50,30 77,76 23,76" fill="${C.orange}"/>`; break;
+    default: body = "";
+  }
+  return `<svg viewBox="0 0 100 100" role="img" aria-label="${label||"Road sign"}" xmlns="http://www.w3.org/2000/svg">${body}</svg>`;
+}
+
+/* ---------- Storage ---------- */
+const KEY = "mnpermit.v1";
+const blank = () => ({ stats:{}, exams:[], cards:{}, settings:{ timer:true } });
+let st = blank();
+try { const raw = localStorage.getItem(KEY); if (raw) st = Object.assign(blank(), JSON.parse(raw)); } catch (e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+
+/* ---------- Helpers ---------- */
+const $ = s => document.querySelector(s);
+const main = () => $("#main");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const byId = Object.fromEntries(Q.map(q => [q.id, q]));
+const fmtTime = ms => { const s=Math.max(0,Math.round(ms/1000)); return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); };
+const pct = (a,b) => b ? Math.round(100*a/b) : 0;
+const PASS = 32, EXAM_N = 40, EXAM_MIN = 30;
+
+function record(id, ok){ const r = st.stats[id] || (st.stats[id] = {n:0,c:0,last:0}); r.n++; if (ok) r.c++; r.last = ok?1:0; }
+const mastered = id => { const r = st.stats[id]; return r && r.last === 1 && r.c >= 2 && r.c/r.n >= 0.6; };
+const isWeak = id => { const r = st.stats[id]; return r && (r.last === 0 || (r.n >= 2 && r.c/r.n < 0.6)); };
+const weakIds = () => Q.filter(q => isWeak(q.id)).map(q => q.id);
+function topicStats(t){ const qs = Q.filter(q=>q.t===t); let n=0,c=0,m=0; qs.forEach(q=>{const r=st.stats[q.id]; if(r){n+=r.n;c+=r.c;} if(mastered(q.id)) m++;}); return {total:qs.length, n, c, m, acc: n?pct(c,n):null}; }
+
+function prepare(q){ const opts = shuffle(q.a.map((text,i)=>({text, ok:i===0}))); return { q, opts, pick:null }; }
+
+/* ---------- Timer & navigation ---------- */
+let tick = null, session = null;
+function stopTick(){ if (tick) { clearInterval(tick); tick = null; } }
+function setTab(name){ document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-current", b.dataset.go === name ? "page" : "false")); }
+function showTabs(on){ $("#tabs").hidden = !on; }
+function go(view, arg){
+  stopTick(); session = (view==="session"||view==="exam") ? session : null;
+  showTabs(view !== "exam");
+  ({home:viewHome, practice:viewPractice, signs:viewSigns, progress:viewProgress})[view](arg);
+  main().scrollTop = 0;
+}
+
+/* ---------- Home ---------- */
+let dailyQ = null;
+function viewHome(){
+  setTab("home");
+  const last = st.exams[st.exams.length-1];
+  const recent = st.exams.slice(-3);
+  const avg = recent.length ? Math.round(recent.reduce((s,e)=>s+e.score,0)/recent.length) : null;
+  let status = "Not started", cls = "chip";
+  if (avg !== null) { if (avg >= 36 && recent.length >= 2) { status="Test ready"; cls="chip good"; } else if (avg >= PASS) { status="Passing"; cls="chip good"; } else { status="Keep practicing"; cls="chip warn"; } }
+  const weak = weakIds().length;
+  const m = Q.filter(q=>mastered(q.id)).length;
+  if (!dailyQ) { const signQs = Q.filter(q=>q.s); dailyQ = prepare(signQs[Math.floor(Math.random()*signQs.length)]); }
+  main().innerHTML = `
+  <section class="hero">
+    <div class="hero-plate">
+      <div class="eyebrow">Class D knowledge test</div>
+      <h1>Minnesota Permit Prep</h1>
+      <p class="hero-sub">${Q.length} practice questions · ${CARDS.length} road signs</p>
+    </div>
+  </section>
+  <section class="readiness card">
+    <div class="ready-top">
+      <div>
+        <div class="label">Last mock exam</div>
+        <div class="big">${last ? `${last.score}<span>/40</span>` : "—"}</div>
+      </div>
+      <span class="${cls}">${status}</span>
+    </div>
+    <div class="meter" role="img" aria-label="Pass line at 32 of 40"><div class="meter-fill" style="width:${last?pct(last.score,40):0}%"></div><div class="meter-line" style="left:80%"></div></div>
+    <p class="fine">The real test is 40 questions. You need 32 correct (80%) to pass. ${m} of ${Q.length} questions mastered.</p>
+    <div class="actions">
+      <button class="btn primary" data-act="exam-start">Start mock exam</button>
+      <button class="btn" data-act="practice" data-topic="weak" ${weak?"":"disabled"}>Review weak spots${weak?` (${weak})`:""}</button>
+    </div>
+  </section>
+  <section class="card daily" id="daily">${dailyHTML()}</section>
+  <h2 class="section-h">Practice by topic</h2>
+  <div class="topics">${topicListHTML()}</div>`;
+}
+function dailyHTML(){
+  const d = dailyQ, done = d.pick !== null;
+  return `<div class="label">Quick check</div>
+  <div class="q-row">${d.q.s?`<div class="sign sm">${signSVG(d.q.s)}</div>`:""}<p class="q-text">${esc(d.q.q)}</p></div>
+  <div class="answers">${d.opts.map((o,i)=>`<button class="ans ${done?(o.ok?"right":(d.pick===i?"wrong":"dim")):""}" data-act="daily" data-i="${i}" ${done?"disabled":""}><span class="key">${"ABCD"[i]}</span><span>${esc(o.text)}</span></button>`).join("")}</div>
+  ${done?`<div class="explain ${d.opts[d.pick].ok?"ok":"no"}"><strong>${d.opts[d.pick].ok?"Correct.":"Not quite."}</strong> ${esc(d.q.e)}</div><button class="btn ghost" data-act="daily-next">Another question</button>`:""}`;
+}
+function topicListHTML(){
+  return Object.entries(TOPICS).map(([k,t])=>{ const s = topicStats(k); return `
+  <button class="topic" data-act="practice" data-topic="${k}">
+    <div class="topic-main"><div class="topic-name">${t.name}</div><div class="topic-blurb">${t.blurb}</div></div>
+    <div class="topic-side"><div class="topic-pct">${s.m}/${s.total}</div><div class="bar"><i style="width:${pct(s.m,s.total)}%"></i></div></div>
+  </button>`; }).join("");
+}
+
+/* ---------- Practice ---------- */
+function viewPractice(){
+  setTab("practice");
+  const weak = weakIds().length;
+  main().innerHTML = `
+  <header class="page-h"><h1>Practice</h1><p>Sets of 10 with instant feedback. Questions you miss come back until you get them right.</p></header>
+  <div class="quick">
+    <button class="btn primary" data-act="practice" data-topic="all">Mixed set</button>
+    <button class="btn" data-act="practice" data-topic="weak" ${weak?"":"disabled"}>Weak spots${weak?` (${weak})`:""}</button>
+  </div>
+  <div class="topics">${topicListHTML()}</div>`;
+}
+function pickPractice(topic, n=10){
+  let pool = topic==="all" ? Q : topic==="weak" ? Q.filter(q=>isWeak(q.id)) : Q.filter(q=>q.t===topic);
+  const prio = q => { const r = st.stats[q.id]; if (!r) return 1; if (r.last===0) return 0; return 2 + r.c/r.n; };
+  return pool.map(q=>({q, k:prio(q)+Math.random()*0.9})).sort((a,b)=>a.k-b.k).slice(0,n).map(x=>x.q);
+}
+function startPractice(topic){
+  const qs = shuffle(pickPractice(topic));
+  if (!qs.length) return;
+  session = { mode:"practice", topic, items: qs.map(prepare), i:0, right:0 };
+  stopTick(); showTabs(true); renderPractice();
+}
+function renderPractice(){
+  const s = session, it = s.items[s.i], done = it.pick !== null;
+  const label = s.topic==="all" ? "Mixed set" : s.topic==="weak" ? "Weak spots" : TOPICS[s.topic].name;
+  main().innerHTML = `
+  <div class="runner">
+    <div class="run-top"><button class="link" data-act="go" data-view="practice">← ${esc(label)}</button><span class="count">${s.i+1} / ${s.items.length}</span></div>
+    <div class="progress"><i style="width:${pct(s.i+(done?1:0), s.items.length)}%"></i></div>
+    ${questionHTML(it, done, "pr")}
+    ${done?`<div class="explain ${it.opts[it.pick].ok?"ok":"no"}" role="status"><strong>${it.opts[it.pick].ok?"Correct.":"Not quite."}</strong> ${esc(it.q.e)}</div>
+    <button class="btn primary wide" data-act="pr-next" id="nextBtn">${s.i+1<s.items.length?"Next question":"See results"}</button>`:""}
+  </div>`;
+  if (done) $("#nextBtn")?.focus();
+}
+function questionHTML(it, reveal, act){
+  return `<div class="qcard">
+    <div class="topic-tag">${TOPICS[it.q.t].name}</div>
+    ${it.q.s?`<div class="sign">${signSVG(it.q.s)}</div>`:""}
+    <p class="q-text lg">${esc(it.q.q)}</p>
+    <div class="answers">${it.opts.map((o,i)=>{
+      let c = "";
+      if (reveal) c = o.ok ? "right" : (it.pick===i ? "wrong" : "dim");
+      else if (it.pick===i) c = "chosen";
+      return `<button class="ans ${c}" data-act="${act}" data-i="${i}" ${reveal?"disabled":""} aria-pressed="${it.pick===i}"><span class="key">${"ABCD"[i]}</span><span>${esc(o.text)}</span></button>`;
+    }).join("")}</div>
+  </div>`;
+}
+function practiceSummary(){
+  const s = session, n = s.items.length;
+  main().innerHTML = `
+  <div class="runner">
+    <div class="result card">
+      <div class="label">${s.topic==="all"?"Mixed set":s.topic==="weak"?"Weak spots":TOPICS[s.topic].name}</div>
+      <div class="big">${s.right}<span>/${n}</span></div>
+      <p class="fine">${s.right===n?"Perfect set.":s.right/n>=0.8?"Above the 80% pass line.":"Below the 80% pass line. Missed questions are saved to Weak spots."}</p>
+      <div class="actions">
+        <button class="btn primary" data-act="practice" data-topic="${s.topic==="weak"&&!weakIds().length?"all":s.topic}">Another set</button>
+        <button class="btn" data-act="go" data-view="practice">All topics</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- Mock exam ---------- */
+function pickExam(){
+  const out = [], groups = {};
+  Q.forEach(q => (groups[q.t] = groups[q.t] || []).push(q));
+  const keys = Object.keys(groups);
+  keys.forEach(k => { const take = Math.floor(EXAM_N * groups[k].length / Q.length); out.push(...shuffle(groups[k]).slice(0, take)); });
+  const rest = shuffle(Q.filter(q => !out.includes(q)));
+  while (out.length < EXAM_N && rest.length) out.push(rest.pop());
+  return shuffle(out);
+}
+function examIntro(){
+  showTabs(true); setTab("home");
+  main().innerHTML = `
+  <div class="runner">
+    <header class="page-h"><h1>Mock exam</h1><p>40 questions drawn from every topic, like the DVS test. You see results and explanations at the end.</p></header>
+    <div class="card spec">
+      <dl>
+        <div><dt>Questions</dt><dd>40</dd></div>
+        <div><dt>To pass</dt><dd>32 correct</dd></div>
+        <div><dt>Time</dt><dd>${st.settings.timer?EXAM_MIN+" min":"Untimed"}</dd></div>
+      </dl>
+      <label class="toggle"><input type="checkbox" id="timerToggle" ${st.settings.timer?"checked":""}><span>Use a ${EXAM_MIN}-minute time limit</span></label>
+      <p class="fine">The real Minnesota test has no time limit. A timer helps you practice working at a steady pace.</p>
+      <button class="btn primary wide" data-act="exam-go">Begin exam</button>
+    </div>
+  </div>`;
+}
+function startExam(){
+  session = { mode:"exam", items: pickExam().map(prepare), i:0, t0: Date.now(), limit: st.settings.timer ? EXAM_MIN*60000 : 0, confirm:false };
+  showTabs(false); renderExam();
+  stopTick();
+  tick = setInterval(()=>{
+    if (!session || session.mode!=="exam") return stopTick();
+    const el = $("#clock"); const used = Date.now()-session.t0;
+    if (session.limit) { const left = session.limit-used; if (el) { el.textContent = fmtTime(left); el.classList.toggle("low", left < 5*60000); } if (left <= 0) finishExam(true); }
+    else if (el) el.textContent = fmtTime(used);
+  }, 500);
+}
+function renderExam(){
+  const s = session, it = s.items[s.i], answered = s.items.filter(x=>x.pick!==null).length;
+  const used = Date.now()-s.t0;
+  main().innerHTML = `
+  <div class="runner exam">
+    <div class="run-top">
+      <button class="link" data-act="exam-quit">Quit</button>
+      <span class="count">Question ${s.i+1} of ${EXAM_N}</span>
+      <span class="clock" id="clock" aria-label="${s.limit?"Time left":"Time used"}">${fmtTime(s.limit? s.limit-used : used)}</span>
+    </div>
+    <div class="progress"><i style="width:${pct(answered,EXAM_N)}%"></i></div>
+    ${s.confirm==="quit"?`<div class="confirm card"><p>Quit this exam? Your answers will not be saved.</p><div class="actions"><button class="btn danger" data-act="exam-quit-yes">Quit exam</button><button class="btn" data-act="confirm-no">Keep going</button></div></div>`:""}
+    ${questionHTML(it, false, "ex")}
+    <div class="exam-nav">
+      <button class="btn" data-act="ex-prev" ${s.i===0?"disabled":""}>Back</button>
+      ${s.i+1<EXAM_N?`<button class="btn primary" data-act="ex-next" ${it.pick===null?"":""}>Next</button>`:`<button class="btn primary" data-act="ex-submit">Submit</button>`}
+    </div>
+    <div class="grid" aria-label="Jump to question">${s.items.map((x,i)=>`<button class="dot ${x.pick!==null?"done":""} ${i===s.i?"here":""}" data-act="ex-jump" data-i="${i}" aria-label="Question ${i+1}${x.pick!==null?", answered":""}">${i+1}</button>`).join("")}</div>
+    ${s.confirm==="submit"?`<div class="confirm card"><p>${EXAM_N-answered} question${EXAM_N-answered===1?" is":"s are"} unanswered and will count as wrong. Submit anyway?</p><div class="actions"><button class="btn primary" data-act="ex-submit-yes">Submit exam</button><button class="btn" data-act="confirm-no">Keep working</button></div></div>`:""}
+  </div>`;
+}
+function finishExam(timedOut){
+  const s = session; stopTick();
+  let score = 0; const byTopic = {};
+  s.items.forEach(it => { const ok = it.pick!==null && it.opts[it.pick].ok; if (ok) score++; record(it.q.id, ok);
+    const b = byTopic[it.q.t] || (byTopic[it.q.t] = {n:0,c:0}); b.n++; if (ok) b.c++; });
+  const ms = Date.now()-s.t0;
+  st.exams.push({ d: Date.now(), score, ms, timed: !!s.limit });
+  st.exams = st.exams.slice(-50); save();
+  const missed = s.items.filter(it => !(it.pick!==null && it.opts[it.pick].ok));
+  session = null; showTabs(true); setTab("home");
+  const passed = score >= PASS;
+  main().innerHTML = `
+  <div class="runner">
+    <div class="result card ${passed?"pass":"fail"}">
+      <div class="stamp">${passed?"PASS":"NOT YET"}</div>
+      <div class="big">${score}<span>/40</span></div>
+      <p class="fine">${timedOut?"Time ran out. ":""}${passed?`You cleared the 32-question pass line${score-PASS?` by ${score-PASS}`:""}.`:`You needed ${PASS-score} more correct to pass.`} Time used ${fmtTime(ms)}.</p>
+      <div class="breakdown">${Object.entries(byTopic).map(([k,b])=>`<div class="bd-row"><span>${TOPICS[k].name}</span><span class="num">${b.c}/${b.n}</span><div class="bar"><i class="${b.c/b.n<0.8?"low":""}" style="width:${pct(b.c,b.n)}%"></i></div></div>`).join("")}</div>
+      <div class="actions"><button class="btn primary" data-act="exam-start">New exam</button>${missed.length?`<button class="btn" data-act="practice" data-topic="weak">Practice missed</button>`:""}</div>
+    </div>
+    ${missed.length?`<h2 class="section-h">Review missed questions (${missed.length})</h2>
+    <div class="review">${missed.map(it=>`<div class="rv card">
+      <div class="topic-tag">${TOPICS[it.q.t].name}</div>
+      <div class="q-row">${it.q.s?`<div class="sign sm">${signSVG(it.q.s)}</div>`:""}<p class="q-text">${esc(it.q.q)}</p></div>
+      ${it.pick!==null?`<p class="rv-line no"><b>Your answer</b> ${esc(it.opts[it.pick].text)}</p>`:`<p class="rv-line no"><b>Your answer</b> Not answered</p>`}
+      <p class="rv-line ok"><b>Correct</b> ${esc(it.q.a[0])}</p>
+      <p class="fine">${esc(it.q.e)}</p></div>`).join("")}</div>`:""}
+  </div>`;
+  main().scrollTop = 0;
+}
+
+/* ---------- Sign flashcards ---------- */
+let deck = null;
+function viewSigns(arg){
+  setTab("signs");
+  const box = s => st.cards[s] || 0;
+  const learned = CARDS.filter(c => box(c.s) >= 2).length;
+  if (!deck || arg === "reset") {
+    deck = { order: shuffle(CARDS).sort((a,b)=>box(a.s)-box(b.s)), i:0, flip:false };
+  }
+  const c = deck.order[deck.i];
+  main().innerHTML = `
+  <header class="page-h"><h1>Road signs</h1><p>Name the sign, then flip to check. Signs you know move to the back of the deck.</p></header>
+  <div class="deck-stats"><span><b class="num">${learned}</b> of ${CARDS.length} learned</span><div class="bar"><i style="width:${pct(learned,CARDS.length)}%"></i></div></div>
+  <div class="flash card ${deck.flip?"flipped":""}">
+    <div class="count">${deck.i+1} / ${deck.order.length}</div>
+    <div class="sign xl">${signSVG(c.s)}</div>
+    ${deck.flip?`<div class="flash-back"><h2>${esc(c.n)}</h2><p>${esc(c.m)}</p></div>
+      <div class="actions two"><button class="btn" data-act="card-again">Study again</button><button class="btn primary" data-act="card-got">I knew it</button></div>`
+    :`<p class="fine center">What does this sign mean?</p><button class="btn primary wide" data-act="card-flip" id="flipBtn">Show answer</button>`}
+  </div>
+  <div class="legend card">
+    <h2 class="section-h tight">Shapes and colors</h2>
+    <dl class="legend-grid">
+      <div><dt>Octagon</dt><dd>Stop</dd></div><div><dt>Triangle, point down</dt><dd>Yield</dd></div>
+      <div><dt>Pentagon</dt><dd>School zone</dd></div><div><dt>Circle</dt><dd>Railroad ahead</dd></div>
+      <div><dt>Pennant</dt><dd>No passing zone</dd></div><div><dt>Diamond</dt><dd>Warning</dd></div>
+      <div><dt><i class="sw" style="background:#f47b20"></i>Orange</dt><dd>Work zone</dd></div><div><dt><i class="sw" style="background:#00754a"></i>Green</dt><dd>Directions</dd></div>
+      <div><dt><i class="sw" style="background:#1f4fa3"></i>Blue</dt><dd>Services</dd></div><div><dt><i class="sw" style="background:#7a4a24"></i>Brown</dt><dd>Recreation</dd></div>
+    </dl>
+  </div>`;
+}
+function cardNext(knew){
+  const c = deck.order[deck.i];
+  st.cards[c.s] = knew ? Math.min(3, (st.cards[c.s]||0)+1) : 0; save();
+  if (!knew) deck.order.push(c);
+  deck.i++; deck.flip = false;
+  if (deck.i >= deck.order.length) deck = null;
+  viewSigns();
+}
+
+/* ---------- Progress ---------- */
+function viewProgress(){
+  setTab("progress");
+  const ex = st.exams, best = ex.length ? Math.max(...ex.map(e=>e.score)) : null;
+  const passes = ex.filter(e=>e.score>=PASS).length;
+  const seen = Object.keys(st.stats).filter(id=>byId[id]).length;
+  const m = Q.filter(q=>mastered(q.id)).length;
+  const learned = CARDS.filter(c => (st.cards[c.s]||0) >= 2).length;
+  main().innerHTML = `
+  <header class="page-h"><h1>Progress</h1><p>Saved on this device.</p></header>
+  <div class="stats">
+    <div class="stat"><div class="label">Mock exams</div><div class="num big-n">${ex.length}</div><div class="fine">${passes} passed</div></div>
+    <div class="stat"><div class="label">Best score</div><div class="num big-n">${best===null?"—":best}</div><div class="fine">out of 40</div></div>
+    <div class="stat"><div class="label">Mastered</div><div class="num big-n">${m}</div><div class="fine">of ${Q.length} questions</div></div>
+    <div class="stat"><div class="label">Signs learned</div><div class="num big-n">${learned}</div><div class="fine">of ${CARDS.length}</div></div>
+  </div>
+  <section class="card">
+    <h2 class="section-h tight">Mock exam scores</h2>
+    ${ex.length ? chartSVG(ex.slice(-12)) : `<div class="empty"><p>No exams yet. Your scores will chart here against the 32-question pass line.</p><button class="btn primary" data-act="exam-start">Take your first mock exam</button></div>`}
+  </section>
+  <section class="card">
+    <h2 class="section-h tight">Accuracy by topic</h2>
+    <div class="breakdown">${Object.entries(TOPICS).map(([k,t])=>{const s=topicStats(k);return `<div class="bd-row"><span>${t.name}</span><span class="num">${s.acc===null?"—":s.acc+"%"}</span><div class="bar"><i class="${s.acc!==null&&s.acc<80?"low":""}" style="width:${s.acc||0}%"></i></div></div>`;}).join("")}</div>
+    <p class="fine">${seen} of ${Q.length} questions attempted. Topics under 80% are marked.</p>
+  </section>
+  <section class="card reset">
+    <div id="resetZone"><button class="btn ghost" data-act="reset">Reset all progress</button></div>
+  </section>`;
+}
+function chartSVG(ex){
+  const W=320,H=170,L=30,R=12,T=14,B=26, iw=W-L-R, ih=H-T-B;
+  const x = i => L + (ex.length===1 ? iw/2 : i*iw/(ex.length-1));
+  const y = v => T + ih - (v/40)*ih;
+  const pts = ex.map((e,i)=>`${x(i).toFixed(1)},${y(e.score).toFixed(1)}`);
+  const area = `M${x(0).toFixed(1)},${y(0)} L${pts.join(" L")} L${x(ex.length-1).toFixed(1)},${y(0)} Z`;
+  const ticks = [0,10,20,30,40];
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Last ${ex.length} mock exam scores">
+    ${ticks.map(t=>`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" class="grid-l"/><text x="${L-6}" y="${y(t)+3.5}" class="ax" text-anchor="end">${t}</text>`).join("")}
+    <line x1="${L}" x2="${W-R}" y1="${y(PASS)}" y2="${y(PASS)}" class="pass-l"/><text x="${W-R}" y="${y(PASS)-5}" class="ax pass-t" text-anchor="end">Pass 32</text>
+    <path d="${area}" class="area"/>
+    <polyline points="${pts.join(" ")}" class="line"/>
+    ${ex.map((e,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(e.score).toFixed(1)}" r="${i===ex.length-1?4.5:3}" class="${e.score>=PASS?"pt-ok":"pt-no"}"/>`).join("")}
+    <text x="${x(ex.length-1).toFixed(1)}" y="${(y(ex[ex.length-1].score)-9).toFixed(1)}" class="ax end-v" text-anchor="${ex.length>1?"end":"middle"}">${ex[ex.length-1].score}</text>
+    <text x="${L}" y="${H-6}" class="ax">Older</text><text x="${W-R}" y="${H-6}" class="ax" text-anchor="end">Latest</text>
+  </svg></div>`;
+}
+
+/* ---------- Events ---------- */
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-act],[data-go]"); if (!b || b.disabled) return;
+  if (b.dataset.go) return go(b.dataset.go);
+  const a = b.dataset.act, i = +b.dataset.i;
+  switch (a) {
+    case "go": return go(b.dataset.view);
+    case "practice": return startPractice(b.dataset.topic);
+    case "daily": dailyQ.pick = i; record(dailyQ.q.id, dailyQ.opts[i].ok); save(); $("#daily").innerHTML = dailyHTML(); return;
+    case "daily-next": { const signQs = Q.filter(q=>q.s && q.id!==dailyQ.q.id); dailyQ = prepare(signQs[Math.floor(Math.random()*signQs.length)]); $("#daily").innerHTML = dailyHTML(); return; }
+    case "pr": { const it = session.items[session.i]; if (it.pick!==null) return; it.pick = i; const ok = it.opts[i].ok; if (ok) session.right++; record(it.q.id, ok); save(); return renderPractice(); }
+    case "pr-next": session.i++; if (session.i >= session.items.length) return practiceSummary(); return renderPractice();
+    case "exam-start": stopTick(); session = null; return examIntro();
+    case "exam-go": return startExam();
+    case "ex": session.items[session.i].pick = i; session.confirm = false; return renderExam();
+    case "ex-next": session.i = Math.min(EXAM_N-1, session.i+1); session.confirm=false; return renderExam();
+    case "ex-prev": session.i = Math.max(0, session.i-1); session.confirm=false; return renderExam();
+    case "ex-jump": session.i = i; session.confirm=false; return renderExam();
+    case "ex-submit": { const left = session.items.filter(x=>x.pick===null).length; if (left) { session.confirm = "submit"; return renderExam(); } return finishExam(false); }
+    case "ex-submit-yes": return finishExam(false);
+    case "exam-quit": session.confirm = "quit"; renderExam(); main().scrollTop = 0; return;
+    case "exam-quit-yes": session = null; return go("home");
+    case "confirm-no": session.confirm = false; return renderExam();
+    case "card-flip": deck.flip = true; return viewSigns();
+    case "card-got": return cardNext(true);
+    case "card-again": return cardNext(false);
+    case "reset": $("#resetZone").innerHTML = `<p>Erase all scores, exam history, and flashcard progress on this device?</p><div class="actions"><button class="btn danger" data-act="reset-yes">Erase progress</button><button class="btn" data-act="reset-no">Cancel</button></div>`; return;
+    case "reset-yes": st = blank(); save(); deck = null; dailyQ = null; return go("progress");
+    case "reset-no": return viewProgress();
+  }
+});
+document.addEventListener("change", e => { if (e.target.id === "timerToggle") { st.settings.timer = e.target.checked; save(); examIntro(); } });
+document.addEventListener("keydown", e => {
+  if (e.target.matches("input,textarea")) return;
+  const k = e.key.toUpperCase(), idx = "1234".indexOf(k) >= 0 ? "1234".indexOf(k) : "ABCD".indexOf(k);
+  if (idx >= 0) { const btn = document.querySelectorAll(".qcard .ans")[idx]; if (btn && !btn.disabled) { btn.click(); e.preventDefault(); } }
+  else if (e.key === "ArrowRight" && session?.mode==="exam") { document.querySelector('[data-act="ex-next"]')?.click(); }
+  else if (e.key === "ArrowLeft" && session?.mode==="exam") { document.querySelector('[data-act="ex-prev"]')?.click(); }
+});
+
+go("home");
+
+if ('serviceWorker' in navigator) { addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+</script>
+
+</body>
+</html>
